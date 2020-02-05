@@ -1,4 +1,4 @@
-# udpgen
+# udpgen [![CircleCI](https://circleci.com/gh/OpenNMS/udpgen.svg?style=svg)](https://circleci.com/gh/OpenNMS/udpgen)
 
 ## Overview
 
