@@ -1,0 +1,15 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:eoan
+    steps:
+      - run:
+          name: Hello
+          command: echo "Hello"
+
+workflows:
+  build:
+    jobs:
+      - build
