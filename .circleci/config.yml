@@ -4,7 +4,9 @@ jobs:
   build:
     docker:
       - image: buildpack-deps:eoan
+    working_directory: ~/repo
     steps:
+      - checkout
       - run:
           name: Hello
           command: echo "Hello"
