@@ -8,8 +8,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Hello
-          command: echo "Hello"
+          name: Install dependencies
+          command: |
+            apt update && apt install -y cmake
+      - run:
+          name: Build
+          command: |
+            cmake ..
+            make
 
 workflows:
   build:
