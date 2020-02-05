@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apt update && apt install -y cmake
+            apt update && apt install -y cmake libsnmp-dev
       - run:
           name: Build
           command: |
