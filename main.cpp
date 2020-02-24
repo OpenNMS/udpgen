@@ -6,6 +6,7 @@
 #include "syslog_generator.hpp"
 #include "trap_generator.hpp"
 #include "netflow5_generator.hpp"
+#include "netflow9_generator.hpp"
 
 void daemonize();
 
@@ -19,7 +20,7 @@ int main(int argc, char **argv) {
     char interactive = 1;
     int num_threads = -1;
     unsigned int num_packets_per_send = 0;
-    enum payloads {SNMP, SYSLOG, NETFLOW5} payload = SYSLOG;
+    enum payloads {SNMP, SYSLOG, NETFLOW5, NETFLOW9} payload = SYSLOG;
 
     int c;
     while ((c = getopt(argc, argv, "dih:p:r:t:x:z:")) != -1) {
@@ -49,6 +50,8 @@ int main(int argc, char **argv) {
                     payload = SYSLOG;
                 } else if (strcmp(optarg, "netflow5") == 0) {
                     payload = NETFLOW5;
+                } else if (strcmp(optarg, "netflow9") == 0) {
+                    payload = NETFLOW9;
                 } else {
                     printf("Invalid payload type: %s\n", optarg);
                     return 1;
@@ -59,7 +62,7 @@ int main(int argc, char **argv) {
                 break;
             default:
                 printf("\nUsage: udpgen [-d] [-i] [-h host] [-p port] [-r rate] [-t threads] [-z packets] [-x type]\n\n");
-                printf("  -x: Type of payload: snmp, syslog, or netflow5 (default: syslog)\n");
+                printf("  -x: Type of payload: snmp, syslog, netflow5, netflow9 (default: syslog)\n");
                 printf("  -d: Daemonize (default: false)\n");
                 printf("  -i: Disable interactivity (default: false)\n");
                 printf("  -h: Target host / IP address (default: 127.0.0.1)\n");
@@ -82,6 +85,7 @@ int main(int argc, char **argv) {
         case SNMP: generator = std::unique_ptr<UDPGenerator>(new TrapGenerator()); break;
         case SYSLOG: generator = std::unique_ptr<UDPGenerator>(new SyslogGenerator()); break;
         case NETFLOW5: generator = std::unique_ptr<UDPGenerator>(new Netflow5Generator()); break;
+        case NETFLOW9: generator = std::unique_ptr<UDPGenerator>(new Netflow9Generator()); break;
     }
 
     if (strlen(host) > 0) {

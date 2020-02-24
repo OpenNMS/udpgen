@@ -62,6 +62,12 @@ unsigned int UDPGenerator::getNumPacketsPerSend() {
     return m_num_packets_per_send;
 }
 
+int UDPGenerator::resolvehelper(const char *hostname, int family, int port, sockaddr_storage *pAddr) {
+    char service[16];
+    snprintf(service, 16, "%d", getPort());
+    return resolvehelper(hostname, family, service, pAddr);
+}
+
 int UDPGenerator::resolvehelper(const char *hostname, int family, const char *service, sockaddr_storage *pAddr) {
     int result;
     addrinfo *result_list = NULL;

@@ -39,6 +39,7 @@ public:
     virtual const char* getPacketDescription() = 0;
     virtual void sendPackets(int threadid, unsigned int num_packets, unsigned long long first_seq) = 0;
 
+    int resolvehelper(const char *hostname, int family, int port, sockaddr_storage *pAddr);
     int resolvehelper(const char *hostname, int family, const char *service, sockaddr_storage *pAddr);
 
 private:

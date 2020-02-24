@@ -2,9 +2,15 @@
 
 ## Overview
 
-Yet another tool used to generate SNMPv2 traps and Syslog messages.
+This tool was written to help stress test OpenNMS' UDP protocol hanlding by generating large volumes of traffic.
 
-This tool was written to help stress test OpenNMS' Syslog and SNMP trap listeners, by generating large volumes of traffic.
+It currently supports generating:
+* SNMP Traps
+* Syslog Messages
+* Netflow 5 flows
+* Netflow 9 flows
+
+The tool does not currently give fine grained control over the payload generation.
 
 ## Building
 
@@ -44,3 +50,12 @@ Generate 200000 SNMPv2 traps per second over 8 threads, targeted at 127.0.0.1:11
 ```sh
 ./udpgen -x snmp -r 200000 -t 8
 ```
+
+### Generate Netflow 9 flows
+
+Generate as many Netflow 9 flows as possible using a single thread pinned to the first core:
+
+```sh
+taskset -c 0 ./udpgen -x netflow9 -r 0
+```
+
