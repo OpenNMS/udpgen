@@ -7,7 +7,8 @@
 #include "rate_limiter.hpp"
 
 UDPGenerator::UDPGenerator() {
-
+    m_threads = nullptr;
+    m_stopped = true;
 }
 
 UDPGenerator::~UDPGenerator() {
@@ -140,8 +141,11 @@ void UDPGenerator::runWithoutRateLimit(int threadid) {
 
 void UDPGenerator::stop() {
     if (!m_stopped) {
-        m_stopped = true;
-        std::cout << "Stopping..." << std::endl;
+        return;
+    }
+    m_stopped = true;
+    std::cout << "Stopping..." << std::endl;
+    if (m_threads != nullptr) {
         for (int i = 0; i < m_num_threads; ++i) {
             m_threads[i].join();
         }

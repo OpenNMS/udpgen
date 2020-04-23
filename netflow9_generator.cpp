@@ -42,7 +42,7 @@ Netflow9Generator::~Netflow9Generator() = default;
 
 int Netflow9Generator::start() {
     if (resolvehelper(getHost(), AF_INET, getPort(), &m_dest)) {
-        perror("resolve()");
+        printf("Resolving '%s' failed.\n", getHost());
         return -1;
     }
 

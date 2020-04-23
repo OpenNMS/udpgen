@@ -19,7 +19,7 @@ int Netflow5Generator::start() {
     char service[16];
     snprintf(service, 16, "%d", getPort());
     if (resolvehelper(getHost(), AF_INET, service, &m_dest)) {
-        perror("resolve()");
+        printf("Resolving '%s' failed.\n", getHost());
         return -1;
     }
 

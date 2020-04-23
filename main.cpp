@@ -126,8 +126,12 @@ int main(int argc, char **argv) {
                generator->getReportInterval(), generator->getReportInterval());
     }
 
-    std::cout << "Starting generator..." << std::endl;
-    generator->start();
+    std::cout << "Starting UDP generator..." << std::endl;
+    if (generator->start()) {
+        std::cout << "UDP generator startup failed. Exiting.." << std::endl;
+        return 1;
+    }
+
     if (interactive) {
         char waitForKey;
         std::cout << "Type q + enter to exit..." << std::endl;
