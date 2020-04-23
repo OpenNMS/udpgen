@@ -2,6 +2,7 @@
 #include <thread>
 #include <atomic>
 #include <cstring>
+#include <signal.h>
 
 #include "syslog_generator.hpp"
 #include "trap_generator.hpp"
@@ -9,6 +10,8 @@
 #include "netflow9_generator.hpp"
 
 void daemonize();
+
+void signal_callback_handler(int signum);
 
 int main(int argc, char **argv) {
     const int HOST_LEN = 512;
@@ -79,6 +82,8 @@ int main(int argc, char **argv) {
     if (daemon) {
         daemonize();
     }
+    // Register signal & signal handler
+    signal(SIGINT, signal_callback_handler);
 
     std::unique_ptr<UDPGenerator> generator;
     switch (payload) {
@@ -121,6 +126,7 @@ int main(int argc, char **argv) {
                generator->getReportInterval(), generator->getReportInterval());
     }
 
+    std::cout << "Starting generator..." << std::endl;
     generator->start();
     if (interactive) {
         char waitForKey;
@@ -166,3 +172,9 @@ void daemonize() {
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
 }
+
+void signal_callback_handler(int signum) {
+  printf("Caught signal %d\n", signum);
+  exit(signum);
+}
+

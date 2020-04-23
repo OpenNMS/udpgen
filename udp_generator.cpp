@@ -117,6 +117,7 @@ void UDPGenerator::runWithRateLimit(int threadid) {
             now = time(0);
             strftime(date_buff, DATE_BUFF_SIZE, "%Y-%m-%d %H:%M:%S.000", localtime(&now));
             printf ("%s: Sent %llu packets.\n", date_buff, seq);
+            fflush(stdout);
         }
     }
 }
