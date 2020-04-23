@@ -37,7 +37,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./repo/build/udpgen
+            - ./project/build/udpgen
   build-docker:
     executor: docker-executor
     steps:
@@ -57,7 +57,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./repo/udpgen-docker-image
+            - ./project/udpgen-docker-image
   publish-docker-image-latest:
     executor: docker-executor
     steps:
