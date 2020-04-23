@@ -18,9 +18,8 @@ commands:
 jobs:
   build:
     docker:
-      - image: buildpack-deps:eoan
+      - image: buildpack-deps:focal
     steps:
-      - setup_remote_docker
       - checkout
       - run:
           name: Install dependencies
