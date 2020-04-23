@@ -32,6 +32,19 @@ jobs:
             mkdir build && cd build
             cmake ..
             make
+      - store_artifacts:
+          path: ./build/udpgen
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./repo/build/udpgen
+  build-docker:
+    executor: docker-executor
+    steps:
+      - setup_remote_docker
+      - checkout
+      - attach_workspace:
+          at: ~/
       - run:
           name: Build Docker Image
           command: |
@@ -66,10 +79,13 @@ workflows:
   build:
     jobs:
       - build
+      - build-docker:
+          requires:
+            - build
       - publish-docker-image-latest:
           context: Service Principal
           requires:
-            - build
+            - build-docker
           filters:
             branches:
               only: master
