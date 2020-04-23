@@ -1,24 +1,75 @@
 version: 2.1
 
+
+executors:
+  docker-executor:
+    docker:
+      - image: docker:19.03.0-git
+
+commands:
+  docker-registry-login:
+    description: "Connect to Docker Registry"
+    steps:
+      - run:
+          name: DockerHub Login
+          command: |
+            docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+
 jobs:
   build:
     docker:
       - image: buildpack-deps:eoan
-    working_directory: ~/repo
     steps:
+      - setup_remote_docker
       - checkout
       - run:
           name: Install dependencies
           command: |
             apt update && apt install -y cmake libsnmp-dev
       - run:
-          name: Build
+          name: Build binary
           command: |
             mkdir build && cd build
             cmake ..
             make
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build -t opennms/udpgen:latest .
+      - run:
+          name: Export Docker Image as artifact
+          command: docker image save opennms/udpgen:latest -o udpgen-docker-image
+      - store_artifacts:
+          path: ./udpgen-docker-image
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./repo/udpgen-docker-image
+  publish-docker-image-latest:
+    executor: docker-executor
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: ~/
+      - docker-registry-login
+      - run:
+          name: Load Docker Container Image File
+          command: |
+            docker image load -i ./udpgen-docker-image
+      - run:
+          name: Publish to DockerHub
+          command: |
+            docker push opennms/udpgen:latest
+
 
 workflows:
   build:
     jobs:
       - build
+      - publish-docker-image-latest:
+          context: Service Principal
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
