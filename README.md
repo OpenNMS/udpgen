@@ -2,7 +2,7 @@
 
 ## Overview
 
-This tool was written to help stress test OpenNMS' UDP protocol hanlding by generating large volumes of traffic.
+This tool was written to help stress test OpenNMS' UDP protocol handling by generating large volumes of traffic.
 
 It currently supports generating:
 * SNMP Traps
@@ -17,7 +17,7 @@ The tool does not currently give fine grained control over the payload generatio
 ### Requirements
 
 * cmake
-* netsnmp-devel
+* net-snmp-devel
 
 ### Compiling
 
@@ -29,6 +29,18 @@ make
 ```
 
 ## Usage
+
+`udpgen [-d] [-i] [-h host] [-p port] [-r rate] [-t threads] [-z packets] [-x type]`
+* `-x`: Type of payload: snmp, syslog, netflow5, netflow9 (default: syslog)
+* `-d`: Daemonize (default: false)
+* `-i`: Disable interactivity (default: false)
+* `-h`: Target host / IP address (default: 127.0.0.1)
+* `-p`: Target port (default: depends on mode)
+* `-r`: Rate - number of packets per second to generate (default: 10000) Set the rate to 0 in order to disable rate limiting
+*  `-t`: Number of threads used to generate packets (default: 1)
+* `-z`: Number of packets per iteration (default: 1) Increase this when sending packets at a high rate
+
+## Examples
 
 ### Generate Syslog Message
 
