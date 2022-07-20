@@ -26,7 +26,7 @@ int Netflow5Generator::start() {
     m_sockets = new int[getNumThreads()];
     for (int i = 0; i < getNumThreads(); ++i) {
         m_sockets[i] = socket(AF_INET, SOCK_DGRAM, 0);
-        if (connect(m_sockets[i], (sockaddr *)&m_dest, sizeof(m_dest)) < 0) {
+        if (connect(m_sockets[i], (sockaddr *)&m_dest, sizeof(struct sockaddr)) < 0) {
             perror("connect()");
             return -1;
         }
