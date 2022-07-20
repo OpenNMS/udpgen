@@ -12,6 +12,7 @@
 void daemonize();
 
 void signal_callback_handler(int signum);
+void SIGUSR1Handler(int signum);
 
 int main(int argc, char **argv) {
     const int HOST_LEN = 512;
@@ -23,10 +24,12 @@ int main(int argc, char **argv) {
     char interactive = 1;
     int num_threads = -1;
     unsigned int num_packets_per_send = 0;
+    unsigned int totalPackets = 0;
+    unsigned int totalSeconds = 0;
     enum payloads {SNMP, SYSLOG, NETFLOW5, NETFLOW9} payload = SYSLOG;
 
     int c;
-    while ((c = getopt(argc, argv, "dih:p:r:t:x:z:")) != -1) {
+    while ((c = getopt(argc, argv, "dih:p:r:s:S:t:x:z:")) != -1) {
         switch (c) {
             case 'd':
                 daemon = 1;
@@ -42,6 +45,12 @@ int main(int argc, char **argv) {
                 break;
             case 'r':
                 rate = atoi(optarg);
+                break;
+            case 's':
+                totalPackets = atoi(optarg);
+                break;
+            case 'S':
+                totalSeconds = atoi(optarg);
                 break;
             case 't':
                 num_threads = atoi(optarg);
@@ -84,6 +93,7 @@ int main(int argc, char **argv) {
     }
     // Register signal & signal handler
     signal(SIGINT, signal_callback_handler);
+    signal(SIGUSR1, SIGUSR1Handler);
 
     std::unique_ptr<UDPGenerator> generator;
     switch (payload) {
@@ -101,6 +111,12 @@ int main(int argc, char **argv) {
     }
     if (rate >= 0) {
         generator->setPacketsPerSecond(rate);
+    }
+    if (totalPackets > 0) {
+        generator->setStopAfterPackets(totalPackets);
+    }
+    if (totalSeconds > 0) {
+        generator->setStopAfterSeconds(totalSeconds);
     }
     if (num_threads > 0) {
         generator->setNumThreads(num_threads);
@@ -122,7 +138,7 @@ int main(int argc, char **argv) {
         printf("\nThe number of packets sent should be printed every %d seconds.\n"
                        "If the more than %d seconds elapses between the reports, "
                        "the program is unable to generate packets at the requested rate.\n"
-                       "You can try consider increasing the number of threads.\n\n",
+                       "Consider increasing the number of threads.\n\n",
                generator->getReportInterval(), generator->getReportInterval());
     }
 
@@ -132,7 +148,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    if (interactive) {
+    if (interactive && !totalPackets && !totalSeconds) {
         char waitForKey;
         std::cout << "Type q + enter to exit..." << std::endl;
         std::cin >> waitForKey;
@@ -182,3 +198,6 @@ void signal_callback_handler(int signum) {
   exit(signum);
 }
 
+void SIGUSR1Handler(int signum) {
+    exit(0);
+}
