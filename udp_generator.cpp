@@ -1,5 +1,7 @@
 #include "udp_generator.hpp"
 
+#include <unistd.h>
+#include <signal.h>
 #include <iostream>
 #include <netdb.h>
 #include <cstring>
@@ -37,6 +39,14 @@ void UDPGenerator::setNumThreads(int num_threads) {
 
 int UDPGenerator::getNumThreads() {
     return m_num_threads;
+}
+
+void UDPGenerator::setStopAfterPackets(unsigned int packets) {
+    m_stopAfterPackets = packets;
+}
+
+void UDPGenerator::setStopAfterSeconds(unsigned int seconds) {
+    m_stopAfterSeconds = seconds;
 }
 
 void UDPGenerator::setPacketsPerSecond(double packets_per_second) {
@@ -110,16 +120,20 @@ void UDPGenerator::runWithRateLimit(int threadid) {
     const int DATE_BUFF_SIZE = 100;
     char date_buff[DATE_BUFF_SIZE];
 
+    time_t startTime = time(0);
     while(!m_stopped) {
         m_limiter.get()->aquire(m_num_packets_per_send);
         unsigned long long seq = m_sequence_counter.fetch_add(m_num_packets_per_send);
         sendPackets(threadid, m_num_packets_per_send, seq - m_num_packets_per_send);
+        now = time(0);
         if (seq % m_report_every_n_packets == 0) {
-            now = time(0);
             strftime(date_buff, DATE_BUFF_SIZE, "%Y-%m-%d %H:%M:%S.000", localtime(&now));
             printf ("%s: Sent %llu packets.\n", date_buff, seq);
             fflush(stdout);
         }
+        if((m_stopAfterSeconds && (now - startTime >= m_stopAfterSeconds)) ||
+           (m_stopAfterPackets && (seq >= m_stopAfterPackets)))
+                kill(getpid(), SIGUSR1);
     }
 }
 
@@ -128,14 +142,18 @@ void UDPGenerator::runWithoutRateLimit(int threadid) {
     const int DATE_BUFF_SIZE = 100;
     char date_buff[DATE_BUFF_SIZE];
 
+    time_t startTime = time(0);
     while(!m_stopped) {
         unsigned long long seq = m_sequence_counter.fetch_add(m_num_packets_per_send);
         sendPackets(threadid, m_num_packets_per_send, seq - m_num_packets_per_send);
+        now = time(0);
         if (seq % m_report_every_n_packets == 0) {
-            now = time(0);
             strftime(date_buff, DATE_BUFF_SIZE, "%Y-%m-%d %H:%M:%S.000", localtime(&now));
             printf ("%s: Sent %llu packets.\n", date_buff, seq);
         }
+        if((m_stopAfterSeconds && (now - startTime >= m_stopAfterSeconds)) ||
+           (m_stopAfterPackets && (seq >= m_stopAfterPackets)))
+				kill(getpid(), SIGUSR1);
     }
 }
 

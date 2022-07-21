@@ -30,6 +30,9 @@ public:
     void setNumPacketsPerSend(unsigned int num_packets);
     unsigned int getNumPacketsPerSend();
 
+    void setStopAfterPackets(unsigned int packets);
+    void setStopAfterSeconds(unsigned int seconds);
+
     virtual int start();
     virtual void stop();
 
@@ -49,6 +52,8 @@ private:
     double m_packets_per_second = 10000;
     int m_report_interval = 10;
     unsigned int m_num_packets_per_send = 1;
+    unsigned int m_stopAfterPackets = 0;
+    unsigned int m_stopAfterSeconds = 0;
 
     unsigned long long m_report_every_n_packets;
     bool m_stopped;
