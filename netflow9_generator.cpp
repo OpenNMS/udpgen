@@ -193,11 +193,20 @@ int Netflow9Generator::generate_flow(u_char * packet, u_int len, const struct ti
     dc->ipproto = 4;
     dc->first_switched = htonl(0);
     dc->last_switched = htonl(1);
-    dc->bytes = htonl(42);
-    dc->packets = htonl (1);
+    dc->bytes = htonl(m_random_gen() % 8192);
+    dc->packets = htonl(m_random_gen() % 10);
     dc->if_index_in = dc->if_index_out = htonl (99);
-    dc->src_port = 99;
-    dc->protocol = 1;
+    Service service = services[m_random_gen() % services_size];
+    dc->protocol = service.protocol;
+    if (service.port > 0) {
+      if (m_random_gen() % 2 == 0) {
+        dc->src_port = (u_int16_t) htons(service.port);
+        dc->dst_port = (u_int16_t) htons(1 + (m_random_gen() % 65535)); // m_random_genom port
+      } else {
+        dc->src_port = (u_int16_t) htons(1 + (m_random_gen() % 65535)); // m_random_genome port
+        dc->dst_port = (u_int16_t) htons(service.port);
+      }
+    }
 
     if (ret_len + freclen > len)
         return (-1);
