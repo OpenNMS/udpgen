@@ -8,46 +8,7 @@ extern "C"
 }
 
 #include "udp_generator.hpp"
-
-struct Service {
-  int port;
-  int protocol;
-};
-
-// a list of common network service
-const Service services[] = {
-  {20, 6},
-  {21, 6},
-  {22, 6},
-  {23, 6},
-  {25, 6},
-  {53, 6},
-  {67, 17},
-  {68, 17},
-  {80, 6},
-  {110, 6},
-  {123, 17},
-  {143, 6},
-  {161, 17},
-  {162, 17},
-  {179, 6},
-  {201, 6},
-  {389, 6},
-  {443, 6},
-  {500, 17},
-  {514, 17},
-  {587, 6},
-  {993, 6},
-  {1701, 17},
-  {3389, 6},
-  {3306, 6},
-  {4500, 17},
-  {0, 1},
-  {0, 50},
-  {0, 51}
-};
-
-const int services_size = sizeof(services)/sizeof(Service);
+#include "service.h"
 
 class Netflow9Generator : public UDPGenerator {
 public:
