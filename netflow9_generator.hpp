@@ -8,6 +8,7 @@ extern "C"
 }
 
 #include "udp_generator.hpp"
+#include "service.h"
 
 class Netflow9Generator : public UDPGenerator {
 public:
