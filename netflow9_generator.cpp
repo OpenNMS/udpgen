@@ -143,7 +143,7 @@ void Netflow9Generator::sendPackets(int threadid, unsigned int num_flows, unsign
                 offset += sizeof (*dh);
             }
 
-            r = generate_flow(packet + offset, sizeof (packet) - offset, &m_system_boot_time, &inc);
+            r = generate_flow(packet + offset, sizeof (packet) - offset, &m_system_boot_time, &inc, nf9->uptime_ms);
             if (r <= 0) {
                 /* yank off data header, if we had to go back */
                 if (last_valid)
@@ -176,7 +176,7 @@ void Netflow9Generator::sendPackets(int threadid, unsigned int num_flows, unsign
     }
 }
 
-int Netflow9Generator::generate_flow(u_char * packet, u_int len, const struct timeval *system_boot_time, u_int * len_used) {
+int Netflow9Generator::generate_flow(u_char * packet, u_int len, const struct timeval *system_boot_time, u_int * len_used, u_int32_t uptime_ms) {
     struct NF9_SOFTFLOWD_DATA_V4 d4;
     struct NF9_SOFTFLOWD_DATA_COMMON *dc;
     u_int freclen, ret_len, nflows;
@@ -191,8 +191,10 @@ int Netflow9Generator::generate_flow(u_char * packet, u_int len, const struct ti
 
     dc = &(d4.c);
     dc->ipproto = 4;
-    dc->first_switched = htonl(0);
-    dc->last_switched = htonl(1);
+    // System uptime at which the first packet of this flow was switched
+    dc->first_switched = uptime_ms;
+    // System uptime at which the last packet of this flow was switched
+    dc->last_switched = uptime_ms;
     dc->bytes = htonl(m_random_gen() % 8192);
     dc->packets = htonl(m_random_gen() % 10);
     dc->if_index_in = dc->if_index_out = htonl (99);
