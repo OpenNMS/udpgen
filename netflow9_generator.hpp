@@ -20,7 +20,7 @@ public:
     virtual void sendPackets(int threadid, unsigned int num_packets, unsigned long long first_seq);
 private:
     void init_template();
-    int generate_flow(u_char * packet, u_int len, const struct timeval *system_boot_time, u_int * len_used);
+    int generate_flow(u_char * packet, u_int len, const struct timeval *system_boot_time, u_int * len_used, u_int32_t uptime_ms);
 
     sockaddr_storage m_dest;
     int* m_sockets = nullptr;
