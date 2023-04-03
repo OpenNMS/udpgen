@@ -13,7 +13,11 @@ commands:
       - run:
           name: DockerHub Login
           command: |
-            docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+            if [ -n "${DOCKERHUB_LOGIN}" ]; then
+              printf "${DOCKERHUB_PASS}" | docker login -u ${DOCKERHUB_LOGIN} --password-stdin
+            else
+              echo "WARNING: dockerhub login not found."
+            fi
 
 jobs:
   build:
