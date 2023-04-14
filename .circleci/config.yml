@@ -86,7 +86,9 @@ workflows:
           requires:
             - build
       - publish-docker-image-latest:
-          context: Service Principal
+          context: 
+            - Service Principal
+            - docker-publish-account
           requires:
             - build-docker
           filters:

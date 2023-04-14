@@ -102,9 +102,10 @@ struct NF9_DATA_FLOWSET_HEADER {
 #define NF9_SRC_VLAN                    58
 /* ... */
 #define NF9_IP_PROTOCOL_VERSION		60
+#define NF9_DIRECTION 61 
 
 /* Stuff pertaining to the templates that softflowd uses */
-#define NF9_SOFTFLOWD_TEMPLATE_NRECORDS	16
+#define NF9_SOFTFLOWD_TEMPLATE_NRECORDS	17
 struct NF9_SOFTFLOWD_TEMPLATE {
     struct NF9_TEMPLATE_FLOWSET_HEADER h;
     struct NF9_TEMPLATE_FLOWSET_RECORD r[NF9_SOFTFLOWD_TEMPLATE_NRECORDS];
@@ -128,6 +129,7 @@ struct NF9_SOFTFLOWD_DATA_COMMON {
     u_int16_t src_port, dst_port;
     u_int8_t protocol, tcp_flags, ipproto, tos;
     u_int16_t icmp_type, vlanid;
+    u_int8_t direction;
 } __packed;
 
 struct NF9_SOFTFLOWD_DATA_V4 {
