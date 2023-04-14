@@ -204,9 +204,11 @@ int Netflow9Generator::generate_flow(u_char * packet, u_int len, const struct ti
       if (m_random_gen() % 2 == 0) {
         dc->src_port = (u_int16_t) htons(service.port);
         dc->dst_port = (u_int16_t) htons(1 + (m_random_gen() % 65535)); // m_random_genom port
+        dc->direction = (u_int8_t) 1;
       } else {
         dc->src_port = (u_int16_t) htons(1 + (m_random_gen() % 65535)); // m_random_genome port
         dc->dst_port = (u_int16_t) htons(service.port);
+        dc->direction = (u_int8_t) 0;
       }
     }
 
@@ -258,6 +260,9 @@ void Netflow9Generator::init_template() {
     v4_template.r[14].length = htons (2);
     v4_template.r[15].type = htons (NF9_SRC_VLAN);
     v4_template.r[15].length = htons (2);
+    v4_template.r[16].type = htons (NF9_DIRECTION);
+    v4_template.r[16].length = htons (1);
+
     memset (&v6_template, 0, sizeof (v6_template));
     v6_template.h.c.flowset_id = htons (NFLOW9_TEMPLATE_SET_ID);
     v6_template.h.c.length = htons (sizeof (v6_template));
@@ -295,6 +300,8 @@ void Netflow9Generator::init_template() {
     v6_template.r[14].length = htons (2);
     v6_template.r[15].type = htons (NF9_SRC_VLAN);
     v6_template.r[15].length = htons (2);
+    v6_template.r[16].type = htons (NF9_DIRECTION);
+    v6_template.r[16].length = htons (1);
 
     // Initialize the options template
     u_int16_t ifidx = 1;
