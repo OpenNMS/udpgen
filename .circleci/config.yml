@@ -4,7 +4,7 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: docker:19.03.0-git
+      - image: docker:git
 
 commands:
   docker-registry-login:
@@ -22,7 +22,7 @@ commands:
 jobs:
   build:
     docker:
-      - image: buildpack-deps:focal
+      - image: buildpack-deps:jammy
     steps:
       - checkout
       - run:
@@ -76,7 +76,6 @@ jobs:
           name: Publish to DockerHub
           command: |
             docker push opennms/udpgen:latest
-
 
 workflows:
   build:
