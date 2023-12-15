@@ -38,8 +38,8 @@ make
 * `-p`: Target port (default: depends on mode)
 * `-r`: Rate - number of packets per second to generate (default: 10000) Set the rate to 0 in order to disable rate limiting
 * `-s`: Send X number of packets and then stop
-* `-s`: Senx packets for X number of seconds and then stop
-*  `-t`: Number of threads used to generate packets (default: 1)
+* `-S`: Senx packets for X number of seconds and then stop
+* `-t`: Number of threads used to generate packets (default: 1)
 * `-z`: Number of packets per iteration (default: 1) Increase this when sending packets at a high rate
 
 ## Examples
